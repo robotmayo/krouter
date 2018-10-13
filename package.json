@@ -9,7 +9,7 @@
     "build:watch": "tsc -w",
     "prepare": "npm run build"
   },
-  "types": "build/index.d.ts",
+  "typings": "build/index.d.ts",
   "ava": {
     "files": [
       "build/test.js"
