@@ -1,0 +1,16 @@
+{
+  "compileOnSave": true,
+  "compilerOptions": {
+    "module": "commonjs",
+    "noImplicitAny": true,
+    "removeComments": false,
+    "preserveConstEnums": true,
+    "sourceMap": true,
+    "outDir": "build",
+    "target": "esnext",
+    "declaration": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true
+  },
+  "include": ["src/**/*.ts"]
+}
