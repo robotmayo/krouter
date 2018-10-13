@@ -3,7 +3,7 @@ import * as koa from "koa";
 
 declare module "koa" {
   interface Context {
-    router?: SimpleKoaRouter;
+    router?: KRouter;
     params?: { [key: string]: any };
   }
 }
@@ -16,7 +16,7 @@ const defaultOpts: RouterOpts = {
   prefix: ""
 };
 
-export default class SimpleKoaRouter {
+export default class KRouter {
   stack: Layer[];
   opts: RouterOpts;
   constructor(opts: RouterOpts = defaultOpts) {

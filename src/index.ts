@@ -1,3 +1,3 @@
-import SimpleKoaRouter from "./router";
+import KRouter from "./router";
 
-export default SimpleKoaRouter;
+export default KRouter;
