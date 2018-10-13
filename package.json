@@ -1,5 +1,5 @@
 {
-  "name": "krouter",
+  "name": "@robotmayo/krouter",
   "version": "0.1.0",
   "description": "A Koa Router based heavily on Express router",
   "main": "build/index.js",
