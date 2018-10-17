@@ -35,9 +35,55 @@ export default class KRouter {
       return next();
     };
   }
-  private register(path: string, method: string, fn: koa.Middleware[]) {
+
+  private register(path: string, method: string, router: KRouter): KRouter;
+  private register(
+    path: string,
+    method: string,
+    middleware: koa.Middleware[]
+  ): KRouter;
+  private register(
+    path: string,
+    method: string,
+    fn: koa.Middleware[] | KRouter
+  ) {
     if (this.opts.prefix) {
+      // if they set a prefix and use / as a path
+      // that usually means they want the root to match prefix/ and prefix(no slash)
+      if (path === "/") {
+        path = "";
+      }
       path = this.opts.prefix + path;
+    }
+    if (fn instanceof KRouter) {
+      const newLayers = fn.stack.map(layer => {
+        let newPath = layer.path;
+        if (newPath === "") newPath = "/";
+        if (newPath === "/") {
+          if (path.endsWith("/")) {
+            newPath = path + newPath;
+          } else {
+            newPath = path + "/" + newPath;
+          }
+          return new Layer(newPath, layer.stack.slice(), layer.method);
+        }
+        if (newPath.startsWith("/")) {
+          if (path.endsWith("/")) {
+            newPath = path + newPath.slice(1);
+          } else {
+            newPath = path + newPath;
+          }
+        } else {
+          if (path.endsWith("/")) {
+            newPath = path + newPath;
+          } else {
+            newPath = path + "/" + newPath;
+          }
+        }
+        return new Layer(newPath, layer.stack.slice(), layer.method);
+      });
+      this.stack = this.stack.concat(newLayers);
+      return this;
     }
     const layer = new Layer(
       path === "/" && this.opts.prefix ? this.opts.prefix : path,
@@ -47,7 +93,8 @@ export default class KRouter {
     this.stack.push(layer);
     return this;
   }
-
+  use(path: string, ...middleware: koa.Middleware[]): KRouter;
+  use(...middleware: koa.Middleware[]): KRouter;
   use(path: string | koa.Middleware, ...middleware: koa.Middleware[]) {
     if (typeof path === "string") {
       return this.register(path, "", middleware);
@@ -88,5 +135,14 @@ export default class KRouter {
       return this.register(path, "PATCH", middleware);
     }
     return this.register("(.*)", "PATCH", [path].concat(middleware));
+  }
+
+  mount(router: KRouter): KRouter;
+  mount(path: string, router: KRouter): KRouter;
+  mount(path: string | KRouter, router?: KRouter): KRouter {
+    if (typeof path === "string") {
+      return this.register(path, "", router);
+    }
+    return this.register("", "", path);
   }
 }

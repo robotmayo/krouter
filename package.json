@@ -4,7 +4,7 @@
   "description": "A Koa Router based heavily on Express router",
   "main": "build/index.js",
   "scripts": {
-    "test": "ava",
+    "test": "ava -v",
     "build": "tsc",
     "build:watch": "tsc -w",
     "prepare": "npm run build"

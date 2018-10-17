@@ -133,3 +133,69 @@ test("[verb] matches on path", async t => {
     t.is(res.status, input.expect.status, input.name);
   }
 });
+
+test("mounted routers work", async t => {
+  const app = new Koa();
+  const router = new SimpleKoaRouter();
+  const subRouter = new SimpleKoaRouter();
+  subRouter.get("/posts", (ctx, next) => {
+    ctx.body = "Im the subrouter";
+  });
+  router.mount(subRouter);
+  app.use(router.middleware());
+  const server = await listen(app);
+  const res = await supertest(server).get("/posts");
+  t.is(res.status, 200);
+  t.is(res.text, "Im the subrouter");
+});
+
+test("mounted routers on a path", async t => {
+  const app = new Koa();
+  const router = new SimpleKoaRouter();
+  const subRouter = new SimpleKoaRouter();
+  subRouter.get("/posts", (ctx, next) => {
+    ctx.body = "Im the subrouter";
+  });
+  router.mount("/api", subRouter);
+  app.use(router.middleware());
+  const server = await listen(app);
+  let res = await supertest(server).get("/posts");
+  t.is(res.status, 404);
+  res = await supertest(server).get("/api/posts");
+  t.is(res.status, 200);
+  t.is(res.text, "Im the subrouter");
+});
+
+test("mounted routers on a path with a prefix", async t => {
+  const app = new Koa();
+  const router = new SimpleKoaRouter({ prefix: "/api" });
+  const subRouter = new SimpleKoaRouter();
+  subRouter.get("/posts", (ctx, next) => {
+    ctx.body = "Im the subrouter";
+  });
+  router.mount(subRouter);
+  app.use(router.middleware());
+  const server = await listen(app);
+  let res = await supertest(server).get("/posts");
+  t.is(res.status, 404);
+  res = await supertest(server).get("/api/posts");
+  t.is(res.status, 200);
+  t.is(res.text, "Im the subrouter");
+});
+
+test("mounted routers with a prefix on a path with a prefix", async t => {
+  const app = new Koa();
+  const router = new SimpleKoaRouter({ prefix: "/api" });
+  const subRouter = new SimpleKoaRouter({ prefix: "/posts" });
+  subRouter.get("/", (ctx, next) => {
+    ctx.body = "Im the subrouter";
+  });
+  router.mount(subRouter);
+  app.use(router.middleware());
+  const server = await listen(app);
+  let res = await supertest(server).get("/posts");
+  t.is(res.status, 404);
+  res = await supertest(server).get("/api/posts");
+  t.is(res.status, 200);
+  t.is(res.text, "Im the subrouter");
+});
