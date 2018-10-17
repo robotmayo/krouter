@@ -22,6 +22,8 @@
   ],
   "files": [
     "build/index.d.ts",
+    "build/layer.d.ts",
+    "build/path-match.d.ts",
     "build/index.js",
     "build/router.js",
     "build/layer.js",
