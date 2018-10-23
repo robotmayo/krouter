@@ -11,6 +11,7 @@ export default class Layer {
   params: { [key: string]: any } | null;
   method: string;
   stack: koa.Middleware[];
+  middleware: compose.ComposedMiddleware<koa.Context>;
 
   extractor: (
     path: string
@@ -33,6 +34,7 @@ export default class Layer {
         throw new Error("krouter middleware must be a function");
       }
     });
+    this.middleware = compose(this.stack);
     this.method = method;
     this.params = null;
   }
@@ -51,6 +53,7 @@ export default class Layer {
 
   async execute(ctx: koa.Context) {
     ctx.params = this.params;
-    await compose(this.stack)(ctx);
+    ctx.matchedPath = this.matchedPath;
+    await this.middleware(ctx);
   }
 }

@@ -5,6 +5,7 @@ declare module "koa" {
   interface Context {
     router?: KRouter;
     params?: { [key: string]: any };
+    matchedPath?: string;
   }
 }
 
