@@ -27,7 +27,7 @@ export default class KRouter {
     return async (ctx, next) => {
       ctx.router = this;
       for (const layer of this.stack) {
-        if (!layer.match(ctx.request.url, ctx.request.method)) {
+        if (!layer.match(ctx.request.path, ctx.request.method)) {
           continue;
         }
         await layer.execute(ctx);
