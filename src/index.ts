@@ -113,11 +113,25 @@ export default class KRouter {
     return this.register("(.*)", "DELETE", [path].concat(middleware));
   }
 
+  delete(path: string | koa.Middleware, ...middleware: koa.Middleware[]) {
+    if (typeof path === "string") {
+      return this.register(path, "DELETE", middleware);
+    }
+    return this.register("(.*)", "DELETE", [path].concat(middleware));
+  }
+
   patch(path: string | koa.Middleware, ...middleware: koa.Middleware[]) {
     if (typeof path === "string") {
       return this.register(path, "PATCH", middleware);
     }
     return this.register("(.*)", "PATCH", [path].concat(middleware));
+  }
+
+  options(path: string | koa.Middleware, ...middleware: koa.Middleware[]) {
+    if (typeof path === "string") {
+      return this.register(path, "OPTIONS", middleware);
+    }
+    return this.register("(.*)", "OPTIONS", [path].concat(middleware));
   }
 
   mount(router: KRouter): KRouter;
