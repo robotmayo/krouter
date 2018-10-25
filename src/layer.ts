@@ -2,6 +2,7 @@ import * as koa from "koa";
 import * as pathToRegexp from "path-to-regexp";
 import * as compose from "koa-compose";
 import pathMatch from "./path-match";
+import StdError from "@robotmayo/stderror";
 
 export default class Layer {
   path: string;
@@ -31,7 +32,11 @@ export default class Layer {
     this.stack = middleware;
     this.stack.forEach(m => {
       if (typeof m !== "function") {
-        throw new Error("krouter middleware must be a function");
+        throw new StdError(
+          "krouter middleware must be a function",
+          "VALIDATION_ERR",
+          { badLayerFn: m }
+        );
       }
     });
     this.middleware = compose(this.stack);

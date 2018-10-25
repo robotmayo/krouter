@@ -60,27 +60,9 @@ export default class KRouter {
       const newLayers = fn.stack.map(layer => {
         let newPath = layer.path;
         if (newPath === "") newPath = "/";
-        if (newPath === "/") {
-          if (path.endsWith("/")) {
-            newPath = path + newPath;
-          } else {
-            newPath = path + "/" + newPath;
-          }
-          return new Layer(newPath, layer.stack.slice(), layer.method);
-        }
-        if (newPath.startsWith("/")) {
-          if (path.endsWith("/")) {
-            newPath = path + newPath.slice(1);
-          } else {
-            newPath = path + newPath;
-          }
-        } else {
-          if (path.endsWith("/")) {
-            newPath = path + newPath;
-          } else {
-            newPath = path + "/" + newPath;
-          }
-        }
+        newPath = path + newPath;
+        newPath = newPath.replace("//", "/");
+
         return new Layer(newPath, layer.stack.slice(), layer.method);
       });
       this.stack = this.stack.concat(newLayers);
