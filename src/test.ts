@@ -19,7 +19,7 @@ function listen(app: Koa) {
   });
 }
 
-type verb = "get" | "put" | "post" | "patch" | "del";
+type verb = "get" | "put" | "post" | "patch" | "delete" | "del" | "options";
 test("[verb] routing matches on verb and not path", async t => {
   const app = new Koa();
   const router = new KRouter();
@@ -118,6 +118,145 @@ test("[verb] matches on path", async t => {
       name: "post will match",
       expect: {
         status: 200
+      }
+    },
+    {
+      args: {
+        injectMiddleware(router) {},
+        usePath: "/thisisthewrongpath",
+        verb: "post"
+      },
+      name: "post will not match",
+      expect: {
+        status: 404
+      }
+    },
+    {
+      args: {
+        injectMiddleware(router) {
+          router.put("/the-put-path", (ctx, next) => {
+            ctx.status = 200;
+            return next();
+          });
+        },
+        usePath: "/the-put-path",
+        verb: "put"
+      },
+      name: "put will match",
+      expect: {
+        status: 200
+      }
+    },
+    {
+      args: {
+        injectMiddleware(router) {
+          router.put("/the-put-path-nomatch", (ctx, next) => {
+            ctx.status = 200;
+            return next();
+          });
+        },
+        usePath: "/thisisthewrongpath",
+        verb: "put"
+      },
+      name: "put will not match",
+      expect: {
+        status: 404
+      }
+    },
+    {
+      args: {
+        injectMiddleware(router) {
+          router.del("/the-del-path", (ctx, next) => {
+            ctx.status = 200;
+            return next();
+          });
+        },
+        usePath: "/the-del-path",
+        verb: "delete"
+      },
+      name: "del will match",
+      expect: {
+        status: 200
+      }
+    },
+    {
+      args: {
+        injectMiddleware(router) {
+          router.del("/the-del-path-nomatch", (ctx, next) => {
+            ctx.status = 200;
+            return next();
+          });
+        },
+        usePath: "/thisisthewrongpath",
+        verb: "delete"
+      },
+      name: "del will not match",
+      expect: {
+        status: 404
+      }
+    },
+    {
+      args: {
+        injectMiddleware(router) {
+          router.patch("/the-patch-path", (ctx, next) => {
+            ctx.status = 200;
+            return next();
+          });
+        },
+        usePath: "/the-patch-path",
+        verb: "patch"
+      },
+      name: "patch will match",
+      expect: {
+        status: 200
+      }
+    },
+    {
+      args: {
+        injectMiddleware(router) {
+          router.patch("/the-patch-path-nomatch", (ctx, next) => {
+            ctx.status = 200;
+            return next();
+          });
+        },
+        usePath: "/thisisthewrongpath",
+        verb: "patch"
+      },
+      name: "patch will not match",
+      expect: {
+        status: 404
+      }
+    },
+    {
+      args: {
+        injectMiddleware(router) {
+          router.options("/the-options-path", (ctx, next) => {
+            ctx.status = 200;
+            return next();
+          });
+        },
+        usePath: "/the-options-path",
+        verb: "options"
+      },
+      name: "options will match",
+      expect: {
+        status: 200
+      }
+    },
+    {
+      args: {
+        injectMiddleware(router) {
+          router.options("/the-options-path-nomatch", (ctx, next) => {
+            ctx.status = 200;
+            return next();
+          });
+        },
+        usePath: "/thisisthewrongpath",
+        verb: "options"
+      },
+      name: "options will not match",
+      expect: {
+        status: 404
       }
     }
   ];
