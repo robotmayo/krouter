@@ -437,7 +437,6 @@ test("params are merged on multiple passed matches", async t => {
       return next();
     })
     .get("/api/:user/:imageid", (ctx, next) => {
-      console.log(ctx.params, ctx.body, "BODY");
       ctx.body.imageid = parseInt(ctx.params.imageid, 10);
     });
   app.use(router.middleware());
