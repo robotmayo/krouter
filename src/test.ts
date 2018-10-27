@@ -427,3 +427,21 @@ test("zero and one or more are handled properly", async t => {
   t.is(res.body.foo[0], "herc");
   t.is(res.body.foo[1], "ham");
 });
+
+test("params are merged on multiple passed matches", async t => {
+  const app = new Koa();
+  const router = new KRouter();
+  router
+    .get("/api/:user*", (ctx, next) => {
+      ctx.body = { user: ctx.params.user[0] };
+      return next();
+    })
+    .get("/api/:user/:imageid", (ctx, next) => {
+      console.log(ctx.params, ctx.body, "BODY");
+      ctx.body.imageid = parseInt(ctx.params.imageid, 10);
+    });
+  app.use(router.middleware());
+  const server = await listen(app);
+  let res = await supertest(server).get("/api/robotmayo/1234");
+  t.deepEqual(res.body, { user: "robotmayo", imageid: 1234 });
+});
