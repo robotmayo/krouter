@@ -13,7 +13,7 @@ function listen(app: Koa) {
       .listen(0)
       .once("error", reject)
       .once("listening", () => {
-        server.off("error", reject);
+        server.removeListener("error", reject);
         resolve(server);
       });
   });
