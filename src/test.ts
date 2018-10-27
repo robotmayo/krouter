@@ -398,3 +398,32 @@ test("use middleware is always called", async t => {
   t.is(res.status, 200);
   t.is(res.text, "2");
 });
+
+test("zero and one or more are handled properly", async t => {
+  const app = new Koa();
+  const router = new KRouter();
+  router.get("/bar/:foo*", ctx => {
+    ctx.status = 200;
+    ctx.body = ctx.params;
+  });
+  app.use(router.middleware());
+  const server = await listen(app);
+  let res = await supertest(server).get("/bar/first/second/third");
+  t.is(res.body.foo[0], "first");
+  t.is(res.body.foo[1], "second");
+  t.is(res.body.foo[2], "third");
+
+  const oneMoreApp = new Koa();
+  const oneMoreRouter = new KRouter();
+  oneMoreRouter.get("/:foo+", ctx => {
+    ctx.status = 200;
+    ctx.body = ctx.params;
+  });
+  oneMoreApp.use(oneMoreRouter.middleware());
+  const oneMoreServer = await listen(oneMoreApp);
+  res = await supertest(oneMoreServer).get("/");
+  t.is(Object.keys(res.body).length, 0);
+  res = await supertest(oneMoreServer).get("/herc/ham");
+  t.is(res.body.foo[0], "herc");
+  t.is(res.body.foo[1], "ham");
+});
