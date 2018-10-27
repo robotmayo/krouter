@@ -1,6 +1,6 @@
 {
   "name": "@robotmayo/krouter",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "A Koa Router based heavily on Express router",
   "main": "build/index.js",
   "scripts": {
