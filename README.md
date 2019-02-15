@@ -1,6 +1,6 @@
 # KRouter
 
-Simple express like router for koajs. Not yet ready for production use.
+Simple express like router for koajs. Lets get it ready for production use.
 
 ## Install
 
@@ -128,3 +128,7 @@ The code is written in typescript so you will need to know it. Install the depen
 ## Test
 
 Simply run `npm run test`.
+
+## Why?
+
+I only recently started using koa and naturually wanted a router for it. I originally used/expirmented with koa-router but this (https://github.com/ZijianHe/koa-router/issues/462) is a big problem for me. I prefer my routing to be as determinstic as possible. Most importantly I simply thought it would be fun to write a simple router. 😃
