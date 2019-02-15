@@ -28,7 +28,8 @@
     "build/index.js",
     "build/router.js",
     "build/layer.js",
-    "build/path-match.js"
+    "build/path-match.js",
+    "READEME.md"
   ],
   "author": "robotmayo",
   "license": "MIT",
